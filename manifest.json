@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Dont leave tab open",
+  "version": "0.2.1",
+  "description": "Keep your place when your attention moves. Finds unfinished browser work and takes you back to it.",
+  "permissions": ["tabs", "storage"],
+  "action": { "default_popup": "popup.html", "default_icon": "icon.png" },
+  "background": { "service_worker": "background.js" },
+  "icons": { "48": "icon.png", "128": "icon.png" }
+}
