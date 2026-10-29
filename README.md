@@ -10,12 +10,16 @@
 
 No npm installation, website, account, API key or backend is required.
 The website is an optional landing page and practice simulator.
+In the extension popup, choose **Popup** or **Side panel** under **Open
+extension as**. The toolbar button uses the selected mode. Side panel requires
+Chrome 114 or newer and can remain open alongside browser tabs. Its layout
+resizes to the panel width; long tab titles are shortened with an ellipsis.
 
 ## Behavior
 
 The extension stores tab titles, URLs, focus timings and action events in
-Chrome local storage. It does not read page contents. Tabs qualify after at
-least 60 seconds of focus and 5 seconds away. You can also add tabs manually.
+Chrome local storage. It does not read page contents. Tabs appear after more
+than 5 seconds of focus as soon as you switch away. You can also add tabs manually.
 Return reactivates the selected tab; Finished closes it after 2 seconds;
 Not a task hides it. Export test data downloads a JSON file locally.
 Favicons can load from the original tab's favicon address.

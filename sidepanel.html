@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body class="side-panel">
+  <header>
+    <h1>Where you left off</h1>
+    <p class="sub">Tabs you worked on, then drifted away from.</p>
+    <label class="mode-setting" for="openMode">
+      Open extension as
+      <select id="openMode">
+        <option value="popup">Popup</option>
+        <option value="sidePanel">Side panel</option>
+      </select>
+    </label>
+    <div class="actions"><button id="addCur" class="primary">+ Add this tab</button></div>
+  </header>
+  <section id="check" hidden></section>
+  <ul id="list"></ul>
+  <p id="empty" hidden>Nothing waiting. Tabs show up here after you spend a little time on them and then move on.</p>
+  <footer>
+    <button id="export" class="link">Export test data</button>
+  </footer>
+  <script src="popup.js"></script>
+</body>
+</html>

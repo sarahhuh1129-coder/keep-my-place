@@ -1,6 +1,6 @@
 // "Unfinished" = you gave it real attention, then haven't been back for a while.
-const MIN_FOCUS_MS = 60 * 1000;
-const AWAY_MS = 5 * 1000;
+const MIN_FOCUS_MS = 5 * 1000;
+const AWAY_MS = 0;
 const CHECK_AFTER_MS = 60 * 1000; // ask about progress only after a minute back on the task
 const openedAt = Date.now();
 const GROUP_COLORS = ["blue", "red", "yellow", "green", "pink", "purple", "cyan"];
@@ -75,6 +75,22 @@ function enableDropTarget(element, onDrop) {
   });
 }
 
+let renderQueued = false;
+function scheduleRender() {
+  if (renderQueued) return;
+  renderQueued = true;
+  setTimeout(() => {
+    renderQueued = false;
+    render();
+  }, 0);
+}
+
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName === "local" && (changes.tabs || changes.active || changes.pinned || changes.ignored || changes.done || changes.groups)) {
+    scheduleRender();
+  }
+});
+
 async function render() {
   const s = await get();
   const now = Date.now();
@@ -127,7 +143,7 @@ async function render() {
       <div class="actions"><button class="primary" data-a="go">Return</button><button data-a="done">Finished</button><button data-a="no">Not a task</button></div>`;
     li.querySelector("img").src = t.favIconUrl || "icon.png";
     li.querySelector(".title").textContent = t.title;
-    li.querySelector(".title").title = t.url;
+    li.querySelector(".title").title = t.title;
     li.querySelectorAll("button").forEach((b) => b.onclick = async () => {
       const a = b.dataset.a;
       if (a === "go") {
@@ -227,6 +243,15 @@ $("export").onclick = async () => {
   a.click();
 };
 
+async function loadOpenMode() {
+  const { openMode = "popup" } = await chrome.storage.local.get("openMode");
+  $("openMode").value = openMode === "sidePanel" ? "sidePanel" : "popup";
+}
+
+$("openMode").addEventListener("change", async (event) => {
+  await chrome.storage.local.set({ openMode: event.target.value });
+});
+
 async function addTabs(chromeTabs) {
   const s = await get();
   const now = Date.now();
@@ -249,4 +274,5 @@ $("addCur").onclick = async () => {
   $("addCur").textContent = "Added ✓ — shows when you switch away";
 };
 
+loadOpenMode();
 render();

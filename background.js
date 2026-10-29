@@ -42,6 +42,19 @@ async function startSpan(tabId) {
   await chrome.storage.local.set(state);
 }
 
+async function applyOpenMode() {
+  const { openMode = "popup" } = await chrome.storage.local.get("openMode");
+  try {
+    await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: openMode === "sidePanel" });
+  } catch (error) {
+    console.error("Could not apply the extension open mode:", error);
+  }
+}
+
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName === "local" && changes.openMode) applyOpenMode();
+});
+
 chrome.tabs.onActivated.addListener(({ tabId }) => startSpan(tabId));
 
 chrome.windows.onFocusChanged.addListener(async (windowId) => {
@@ -72,9 +85,13 @@ chrome.tabs.onRemoved.addListener(async (tabId) => {
   await chrome.storage.local.set(state);
 });
 
-chrome.runtime.onStartup.addListener(() => chrome.storage.local.set({ tabs: {}, active: null, groups: [] }));
+chrome.runtime.onStartup.addListener(() => {
+  applyOpenMode();
+  chrome.storage.local.set({ tabs: {}, active: null, groups: [] });
+});
 
 chrome.runtime.onInstalled.addListener(async () => {
+  await applyOpenMode();
   const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
   if (tab) startSpan(tab.id);
 });
